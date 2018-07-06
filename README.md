@@ -4,7 +4,7 @@
 
 ## 安装
 
-> composer require tossboy/email
+> composer require tossboy/email dev-master
 
 ## 使用方法
 
