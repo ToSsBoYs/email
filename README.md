@@ -19,3 +19,4 @@ $status = $email->sendMail('xun0726@qq.com','数据库备份提醒',date('Y-m-d 
 var_dump($status);//成功返回true 失败返回错误信息
 ```
 
+
