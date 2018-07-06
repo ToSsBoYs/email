@@ -1,12 +1,12 @@
 # email
 
-基于phpmail的邮箱发送类
+> 基于phpmail的邮箱发送类
 
-##安装
+## 安装
 
-composer require tossboy/email
+> composer require tossboy/email
 
-##使用方法
+## 使用方法
 
 ```php
 use Email\Mail;
