@@ -16,63 +16,77 @@ namespace Email;
 use PHPMailer;
 class Mail
 {
-    private $_Config = [
-        //各邮箱smtp服务器 以及支持的协议
-        'Host' => [
-            'qq' => 'smtp.qq.com',// SSL/TLS/ STARTTLS（TLS）
-            'gmail' => 'smtp.gmail.com',// TLS/ STARTTLS（TLS）
-            'foxmail' => 'smtp.exmail.qq.com',// SSL/TLS/ STARTTLS（TLS）
-            'outlook' => 'smtp-mail.outlook.com',// STARTTLS（TLS）
-            'yahoo' => 'smtp.mail.yahoo.com', // TLS/STARTTLS（TLS）
-            '163' => 'smtp.163.com', // SSL/TLS
-            'hotmail' => 'smtp.live.com', // STARTTLS（TLS）
-            'icloud' => 'smtp.mail.me.com', // STARTTLS（TLS）
-            'yandex' => 'smtp.yandex.ru', // SSL/TLS/STARTTLS（SSL/TLS）
-            'gmx' => 'smtp.gmx.com', // TLS/STARTTLS
-            'sina' => 'smtp.sina.com', // SSL/TLS/STARTTLS（SSL/TLS）
-            'aol' => 'smtp.aol.com', // TLS／STARTTLS
-            'rediff' => 'smtp.rediffmail.com', // SSL/TLS/STARTTLS（SSL/TLS）
-        ],
-        //对于ssl/tls加密，使用465端口
-        //对于starttls 一般使用587端口
-        'Port' => [
-            'ssl' => 465,
-            'tls' => 465,
-            'starttls' => 587,
-        ],
-    ];
-    public function __construct()
-    {
-
-    }
     /**
-     * @param $to
-     * @param $title
-     * @param $content
-     * @return bool
+     * 各邮箱smtp服务器 以及支持的协议
+     * @var array
      */
-    public function sendMail($to,$title,$content){
+    private $host = [
+        'qq' => 'smtp.qq.com',// SSL/TLS/ STARTTLS（TLS）
+        'gmail' => 'smtp.gmail.com',// TLS/ STARTTLS（TLS）
+        'foxmail' => 'smtp.exmail.qq.com',// SSL/TLS/ STARTTLS（TLS）
+        'outlook' => 'smtp-mail.outlook.com',// STARTTLS（TLS）
+        'yahoo' => 'smtp.mail.yahoo.com', // TLS/STARTTLS（TLS）
+        '163' => 'smtp.163.com', // SSL/TLS
+        'hotmail' => 'smtp.live.com', // STARTTLS（TLS）
+        'icloud' => 'smtp.mail.me.com', // STARTTLS（TLS）
+        'yandex' => 'smtp.yandex.ru', // SSL/TLS/STARTTLS（SSL/TLS）
+        'gmx' => 'smtp.gmx.com', // TLS/STARTTLS
+        'sina' => 'smtp.sina.com', // SSL/TLS/STARTTLS（SSL/TLS）
+        'aol' => 'smtp.aol.com', // TLS／STARTTLS
+        'rediff' => 'smtp.rediffmail.com', // SSL/TLS/STARTTLS（SSL/TLS）
+    ];
+    /**
+     * 对于ssl/tls加密，使用465端口
+     * 对于starttls 一般使用587端口
+     * @var array
+     */
+    private $port = [
+        'ssl' => 465,
+        'tls' => 465,
+        'starttls' => 587,
+    ];
+    private $config = [
+        'secure' => 'ssl',//发送的协议方式 默认ssl
+        'host' => '163',//发送的邮箱名
+        'email' => '',//发送方邮箱
+        'password' => '',//邮箱密码
+    ];
+
+    public function __construct($config = [])
+    {
+        $this->config = array_merge($this->config,$config);
+    }
+
+    /**
+     * 发送邮件
+     * @param $tomail  接收方邮箱
+     * @param $title  邮件标题
+     * @param $content 邮件内容
+     * @param array $attachment 邮件附件
+     * @return bool|string 成功则返回true 失败则返回错误信息
+     * @throws \phpmailerException
+     */
+    public function sendMail($tomail,$title,$content,$attachment=[]){
         $mail = new PHPMailer();
-        $mail->isSMTP();  //使用smtp鉴权方式发送邮件
-        $mail->SMTPAuth=true; //smtp需要鉴权 这个必须是true
-        $mail->Host = 'smtp.qq.com'; //链接qq域名邮箱的服务器地址
-        $mail->SMTPSecure = 'ssl';//设置使用ssl加密方式登录鉴权
-        $mail->Port = 465; //465//587
-        $mail->CharSet = 'UTF-8';
-        $mail->FromName = '';
-        $mail->Username ='1769059514@qq.com';
-        $mail->Password = 'iudtoaukbiroecag';
-        $mail->From = '1769059514@qq.com';
-        $mail->isHTML(true);
-        $mail->addAddress($to,'中商溯源正品商城');
-        $mail->Subject = $title;
-        $mail->Body = $content;
-        $status = $mail->send();
-        //简单的判断与提示信息
-        if($status) {
-            return true;
-        }else{
-            return false;
+        $mail->isSMTP();// 使用SMTP服务
+        $mail->CharSet = "utf8";// 编码格式为utf8，不设置编码的话，中文会出现乱码
+        $mail->Host = $this->host[$this->config['host']];// 发送方的SMTP服务器地址
+        $mail->SMTPAuth = true;// 是否使用身份验证
+        $mail->Username = $this->config['email'];// 发送方的邮箱用户名
+        $mail->Password = $this->config['password'];// 发送方的邮箱密码，注意用163邮箱和QQ这里填写的是“客户端授权密码”而不是邮箱的登录密码！
+        $mail->SMTPSecure = $this->config['secure'];// 使用的协议方式
+        $mail->Port = $this->port[$this->config['secure']];// 协议方式端口号
+        $mail->From= $this->config['email'];
+        $mail->setFrom($this->config['email'],'');// 设置发件人信息，如邮件格式说明中的发件人，这里会显示为Mailer(xxxx@163.com），Mailer是当做名字显示
+        $mail->addAddress($tomail,'');// 设置收件人信息，如邮件格式说明中的收件人，这里会显示为Liang(yyyy@163.com)
+        $mail->IsHTML(true);
+        $mail->Subject = $title;// 邮件标题
+        $mail->Body = $content;// 邮件正文
+        if (is_array($attachment)) { // 添加附件
+            foreach ($attachment as $file) {
+                is_file($file) && $mail->AddAttachment($file);
+            }
         }
+        return $mail->Send() ? true : $mail->ErrorInfo;//发送邮件
     }
 }
