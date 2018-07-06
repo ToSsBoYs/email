@@ -43,12 +43,8 @@ class Mail
     ];
     public function __construct()
     {
-    }
 
-    public function send(){
-        var_dump($this->_Config);
     }
-
     /**
      * @param $to
      * @param $title
