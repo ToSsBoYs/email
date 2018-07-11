@@ -14,6 +14,7 @@
 namespace Email;
 
 use PHPMailer;
+
 class Mail
 {
     /**
@@ -54,7 +55,7 @@ class Mail
 
     public function __construct($config = [])
     {
-        $this->config = array_merge($this->config,$config);
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -66,7 +67,8 @@ class Mail
      * @return bool|string 成功则返回true 失败则返回错误信息
      * @throws \phpmailerException
      */
-    public function sendMail($tomail,$title,$content,$attachment=[]){
+    public function sendMail($tomail, $title, $content, $attachment = [])
+    {
         $mail = new PHPMailer();
         $mail->isSMTP();// 使用SMTP服务
         $mail->CharSet = "utf8";// 编码格式为utf8，不设置编码的话，中文会出现乱码
@@ -76,9 +78,9 @@ class Mail
         $mail->Password = $this->config['password'];// 发送方的邮箱密码，注意用163邮箱和QQ这里填写的是“客户端授权密码”而不是邮箱的登录密码！
         $mail->SMTPSecure = $this->config['secure'];// 使用的协议方式
         $mail->Port = $this->port[$this->config['secure']];// 协议方式端口号
-        $mail->From= $this->config['email'];
-        $mail->setFrom($this->config['email'],'');// 设置发件人信息，如邮件格式说明中的发件人，这里会显示为Mailer(xxxx@163.com），Mailer是当做名字显示
-        $mail->addAddress($tomail,'');// 设置收件人信息，如邮件格式说明中的收件人，这里会显示为Liang(yyyy@163.com)
+        $mail->From = $this->config['email'];
+        $mail->setFrom($this->config['email'], '');// 设置发件人信息，如邮件格式说明中的发件人，这里会显示为Mailer(xxxx@163.com），Mailer是当做名字显示
+        $mail->addAddress($tomail, '');// 设置收件人信息，如邮件格式说明中的收件人，这里会显示为Liang(yyyy@163.com)
         $mail->IsHTML(true);
         $mail->Subject = $title;// 邮件标题
         $mail->Body = $content;// 邮件正文
