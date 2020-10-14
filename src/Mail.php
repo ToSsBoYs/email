@@ -36,6 +36,7 @@ class Mail
         'aol' => 'smtp.aol.com', // TLS／STARTTLS
         'rediff' => 'smtp.rediffmail.com', // SSL/TLS/STARTTLS（SSL/TLS）
     ];
+    
     /**
      * 对于ssl/tls加密，使用465端口
      * 对于starttls 一般使用587端口
